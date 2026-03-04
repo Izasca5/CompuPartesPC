@@ -1,0 +1,497 @@
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* =========================================
+   RAÍZ Y FONDO
+   ========================================= */
+.app-root {
+  min-height: 100vh;
+  background: #111827;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(56,189,248,0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(129,140,248,0.05) 0%, transparent 50%),
+    repeating-linear-gradient(0deg,   transparent, transparent 39px, rgba(255,255,255,0.015) 39px, rgba(255,255,255,0.015) 40px),
+    repeating-linear-gradient(90deg,  transparent, transparent 39px, rgba(255,255,255,0.015) 39px, rgba(255,255,255,0.015) 40px);
+  color: #e2e8f0;
+  font-family: 'Share Tech Mono', 'Courier New', monospace;
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================
+   HEADER
+   ========================================= */
+.app-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 36px;
+  background: rgba(17,24,39,0.92);
+  border-bottom: 1px solid #253347;
+  backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 50;
+}
+.logo { display: flex; align-items: center; gap: 12px; }
+.logo-icon { font-size: 26px; }
+.logo-name { font-size: 20px; font-weight: 700; color: #f1f5f9; letter-spacing: 0.05em; }
+.logo-sub  { font-size: 10px; color: #64748b; letter-spacing: 0.2em; text-transform: uppercase; }
+.progress-wrap { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+.progress-bar  { width: 180px; height: 5px; background: #1e3048; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s ease; }
+.progress-label { font-size: 11px; color: #7c93ad; letter-spacing: 0.1em; }
+.total-box   { text-align: right; }
+.total-label { display: block; font-size: 10px; color: #64748b; letter-spacing: 0.2em; margin-bottom: 2px; }
+.total-value { font-size: 26px; font-weight: 700; }
+
+/* =========================================
+   WORKSPACE
+   ========================================= */
+.workspace {
+  flex: 1; display: flex; gap: 0;
+  padding: 16px 40px 36px 40px;
+  max-width: 1400px; margin: 0 auto; width: 100%;
+}
+
+/* =========================================
+   CONTENEDOR 3D
+   ========================================= */
+.pc-container {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: flex-start;
+  padding-top: 10px;
+  position: relative;
+}
+.scene-wrapper { width: 820px; height: 800px; perspective: 1800px; }
+
+/* =========================================
+   ESCENA ISOMÉTRICA
+   ========================================= */
+.pc-scene {
+  width: 100%; height: 100%;
+  transform: rotateX(50deg) rotateZ(-35deg);
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pc-scene:hover { transform: rotateX(42deg) rotateZ(-28deg); }
+
+/* =========================================
+   CAJA DEL PC
+   ========================================= */
+.pc-case {
+  position: relative; width: 480px; height: 640px;
+  margin: 40px auto; transform-style: preserve-3d;
+}
+
+/* Panel frontal — ahora clickable */
+.case-frame {
+  position: absolute; inset: 0;
+  border: 2px solid #2e4060; border-radius: 6px; cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow:
+    -30px 30px 0 #0e1520,
+    -30px 30px 0 1px #1e3048,
+    0 0 60px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+}
+/* Franja superior con color de acento */
+.case-frame::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--accent, #38bdf8), var(--accent2, #818cf8), var(--accent, #38bdf8));
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+  border-radius: 6px 6px 0 0;
+}
+/* Cara lateral */
+.case-frame::after {
+  content: ''; position: absolute;
+  top: 2px; left: -30px; width: 30px; height: 100%;
+  background: linear-gradient(180deg, #0e1520, #0a1018);
+  border-left: 1px solid #1e3048; border-bottom: 1px solid #1e3048;
+}
+.case-frame:hover, .case-frame.hovered {
+  box-shadow:
+    -30px 30px 0 #0e1520,
+    -30px 30px 0 1px #1e3048,
+    0 0 30px rgba(56,189,248,0.15),
+    inset 0 0 40px rgba(56,189,248,0.04);
+}
+/* Etiqueta del nombre de la caja */
+.case-name-tag {
+  position: absolute;
+  top: 10px; right: 14px;
+  font-size: 9px; letter-spacing: 0.12em;
+  pointer-events: none; opacity: 0.9;
+  color: #c8dff0;
+  z-index: 5;
+}
+.case-name-tag.empty { color: #5a8090; }
+
+@keyframes shimmer {
+  0%   { background-position: 0%   0%; }
+  100% { background-position: 200% 0%; }
+}
+
+/* =========================================
+   VENTILADORES DE CAJA
+   ========================================= */
+.case-fans {
+  position: absolute;
+  top: 0; right: 14px; height: 100%;
+  display: flex; flex-direction: column;
+  justify-content: space-evenly;
+  padding: 30px 0; pointer-events: none; z-index: 10;
+}
+.case-fan {
+  width: 76px; height: 76px; border-radius: 50%;
+  border: 2px solid #253347; background: #0e1520;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: inset 0 0 10px rgba(56,189,248,0.06);
+}
+.fan-blade {
+  width: 60px; height: 60px; border-radius: 50%;
+  background: repeating-conic-gradient(#1a2840 0deg, #1a2840 45deg, #243550 45deg, #243550 90deg);
+  animation: spin 3s linear infinite;
+  border: 1px solid #2e4060;
+}
+
+/* =========================================
+   PLACA BASE
+   ========================================= */
+.mb-tray {
+  position: absolute; top: 42px; left: 26px;
+  width: 315px; height: 405px;
+  background: #0d1f10; border: 1px solid #1a3520; border-radius: 3px;
+  cursor: pointer; transform-style: preserve-3d;
+  transform: translateZ(8px); transition: all 0.25s ease; overflow: visible;
+}
+.mb-tray::before {
+  content: ''; position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(56,189,248,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56,189,248,0.05) 1px, transparent 1px);
+  background-size: 14px 14px;
+  pointer-events: none; border-radius: 3px;
+}
+.mb-tray:hover, .mb-tray.hovered {
+  border-color: var(--accent, #38bdf8);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--accent, #38bdf8) 30%, transparent);
+  transform: translateZ(16px);
+}
+.mb-tray.installed { border-color: #1e4025; background: #0a1e0d; }
+
+/* CPU */
+.cpu-block {
+  position: absolute; top: 30px; left: 42px;
+  width: 108px; height: 108px;
+  background: linear-gradient(135deg, #1e3248, #12202e);
+  border: 1px solid #2e4a65; border-radius: 3px;
+  cursor: pointer; transform: translateZ(10px); transform-style: preserve-3d;
+  transition: all 0.2s ease;
+  display: flex; align-items: center; justify-content: center; overflow: hidden;
+}
+.cpu-block::before {
+  content: ''; position: absolute; inset: 5px;
+  border: 1px solid rgba(56,189,248,0.2); border-radius: 2px;
+}
+.cpu-block:hover, .cpu-block.hovered {
+  border-color: var(--accent, #38bdf8);
+  transform: translateZ(26px);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent, #38bdf8) 40%, transparent);
+}
+.cpu-block.installed { border-color: #2a6040; background: linear-gradient(135deg, #0f2a1a, #081810); }
+.cpu-lid {
+  width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+  background:
+    repeating-linear-gradient(0deg,  transparent, transparent 4px, rgba(255,255,255,0.02) 4px, rgba(255,255,255,0.02) 5px),
+    repeating-linear-gradient(90deg, transparent, transparent 4px, rgba(255,255,255,0.02) 4px, rgba(255,255,255,0.02) 5px);
+}
+.cpu-logo { font-size: 11px; font-weight: 700; color: #d8eaf8; letter-spacing: 1px; }
+
+/* RAM — 4 rectángulos verticales en fila horizontal (slots vistos desde arriba) */
+.ram-block {
+  position: absolute; top: 36px; right: 4px;
+  width: 116px; height: 120px;
+  display: flex; flex-direction: row; gap: 6px;
+  align-items: center; justify-content: center;
+  cursor: pointer; transform: translateZ(10px); transform-style: preserve-3d;
+  transition: transform 0.2s ease; padding: 3px;
+}
+.ram-block:hover, .ram-block.hovered { transform: translateZ(26px); }
+.ram-stick {
+  width: 17px; height: 112px;
+  background: linear-gradient(180deg, #1e3048 0%, #2a3f5a 50%, #1e3048 100%);
+  border: 1px solid #2e4060; border-radius: 1px; position: relative;
+  flex-shrink: 0;
+}
+.ram-stick.dim { opacity: 0.3; }
+.ram-block.installed .ram-stick:not(.dim) {
+  background: linear-gradient(180deg, #1a3828 0%, #2a5040 50%, #1a3828 100%);
+  border-color: #2a6045;
+}
+/* RGB corre verticalmente por el borde izquierdo del stick */
+.ram-block.installed .ram-stick:not(.dim)::before {
+  content: ''; position: absolute;
+  top: 3px; left: 1px; width: 3px; bottom: 3px;
+  background: linear-gradient(180deg, var(--accent, #38bdf8), var(--accent2, #818cf8), #f472b6, var(--accent, #38bdf8));
+  background-size: 100% 200%; border-radius: 1px;
+  animation: rgbPulse 2.5s ease-in-out infinite, rgbShiftV 4s linear infinite;
+}
+@keyframes rgbPulse  { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+@keyframes rgbShiftV { 0% { background-position: 0% 0%; } 100% { background-position: 0% 200%; } }
+.ram-label { position: absolute; bottom: -18px; white-space: nowrap; font-size: 8px; color: #4a6080; }
+
+/* GPU */
+.gpu-block {
+  position: absolute; bottom: 48px; left: 12px;
+  width: 290px; height: 92px;
+  background: linear-gradient(135deg, #18202e, #0f1622);
+  border: 1px solid #2a3850; border-radius: 3px;
+  cursor: pointer; transform: translateZ(36px); transform-style: preserve-3d;
+  transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 8px; padding: 8px 12px; overflow: hidden;
+}
+.gpu-block:hover, .gpu-block.hovered {
+  transform: translateZ(50px);
+  box-shadow: 0 0 22px color-mix(in srgb, var(--accent, #38bdf8) 35%, transparent);
+}
+.gpu-fans { display: flex; gap: 8px; flex-shrink: 0; }
+.gpu-fan {
+  width: 36px; height: 36px; border-radius: 50%;
+  border: 2px solid #2a3f5f;
+  background: repeating-conic-gradient(#1a2840 0deg, #1a2840 30deg, #243558 30deg, #243558 60deg);
+  animation: spin 2s linear infinite;
+  box-shadow: 0 0 6px rgba(56,189,248,0.15);
+}
+.gpu-fan:nth-child(2) { animation-delay: -0.3s; }
+.gpu-fan:nth-child(3) { animation-delay: -0.6s; }
+.gpu-name { font-size: 10px; color: #c8dff0; letter-spacing: 0.1em; }
+
+/* NVMe */
+.nvme-block {
+  position: absolute; top: 178px; left: 20px;
+  width: 192px; height: 46px;
+  background: #0c1e12; border: 1px solid #1a3522; border-radius: 2px;
+  cursor: pointer; transform: translateZ(6px);
+  transition: all 0.2s ease; display: flex; align-items: center; justify-content: center;
+}
+.nvme-block:hover, .nvme-block.hovered {
+  border-color: var(--accent, #38bdf8); transform: translateZ(14px);
+}
+.nvme-block.installed {
+  background: linear-gradient(90deg, #162030, #0a1828, #162030);
+  border-color: #1e3f5a;
+  animation: nvmeActivity 1.5s steps(1) infinite;
+}
+@keyframes nvmeActivity {
+  0%, 90% { border-color: #1e3f5a; }
+  95% { border-color: var(--accent, #38bdf8); box-shadow: 0 0 6px color-mix(in srgb, var(--accent, #38bdf8) 50%, transparent); }
+}
+
+/* =========================================
+   PSU — abajo a la IZQUIERDA
+   ========================================= */
+.psu-block {
+  position: absolute;
+  bottom: 22px; left: 22px;
+  width: 180px; height: 116px;
+  background: linear-gradient(135deg, #1e2d42, #111e2e);
+  border: 1px solid #2a3850; border-radius: 4px;
+  cursor: pointer; transform: translateZ(6px);
+  transition: all 0.2s ease;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 4px;
+}
+.psu-block:hover, .psu-block.hovered {
+  border-color: var(--accent, #38bdf8); transform: translateZ(14px);
+  box-shadow: 0 0 14px color-mix(in srgb, var(--accent, #38bdf8) 25%, transparent);
+}
+.psu-block.installed { border-color: #1e3a5f; }
+.psu-fan-hole {
+  width: 70px; height: 70px; border-radius: 50%;
+  border: 2px solid #2a3850;
+  background: repeating-conic-gradient(#16202e 0deg, #16202e 30deg, #0e1620 30deg, #0e1620 60deg);
+}
+.psu-block.installed .psu-fan-hole { animation: spin 4s linear infinite; }
+.psu-watt { font-size: 10px; color: #c8dff0; letter-spacing: 0.05em; }
+
+/* =========================================
+   BAHÍA HDD/SSD — abajo al CENTRO
+   ========================================= */
+.hdd-bay {
+  position: absolute;
+  bottom: 22px; right: 22px;
+  transform: translateZ(6px);
+  width: 120px; height: 116px;
+  background: linear-gradient(135deg, #1a2030, #111824);
+  border: 1px solid #2a3548; border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px;
+  padding: 8px;
+}
+.hdd-bay:hover, .hdd-bay.hovered {
+  border-color: var(--accent, #38bdf8);
+  transform: translateZ(14px);
+  box-shadow: 0 0 12px color-mix(in srgb, var(--accent, #38bdf8) 25%, transparent);
+}
+.hdd-bay.installed { border-color: #1e3a5f; }
+
+.bay-slot {
+  width: 100%; height: 28px;
+  border: 1px dashed #2a3548; border-radius: 2px;
+  display: flex; align-items: center; justify-content: center;
+}
+.bay-slot.muted { opacity: 0.3; }
+
+.bay-drive {
+  width: 100%; height: 100%;
+  border: 1px solid; border-radius: 2px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 5px;
+}
+.bay-label { font-size: 9px; font-weight: 700; letter-spacing: 0.1em; color: #c8dff0; }
+.bay-activity {
+  width: 4px; height: 4px; border-radius: 50%;
+  animation: blink 0.8s steps(1) infinite;
+}
+@keyframes blink { 0%, 49% { opacity: 1; } 50%, 100% { opacity: 0; } }
+
+.bay-empty {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.bay-empty-muted { width: 80%; height: 2px; background: #2a3548; border-radius: 1px; }
+
+/* =========================================
+   ETIQUETAS GENÉRICAS
+   ========================================= */
+.part-label {
+  position: absolute; bottom: 7px; left: 8px;
+  font-size: 9px; color: #c8dff0; letter-spacing: 0.08em; pointer-events: none;
+}
+.part-label-sm {
+  font-size: 9px; color: #c8dff0; letter-spacing: 0.05em;
+  pointer-events: none; white-space: nowrap;
+}
+.installed-badge {
+  position: absolute; top: 6px; right: 6px;
+  width: 16px; height: 16px;
+  background: #0f5132; border: 1px solid; border-radius: 50%;
+  font-size: 8px; font-weight: bold;
+  display: flex; align-items: center; justify-content: center;
+}
+.installed-badge.sm { width: 13px; height: 13px; font-size: 7px; top: 4px; right: 4px; }
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* =========================================
+   TOOLTIP
+   ========================================= */
+.tooltip {
+  position: absolute; bottom: 18px; left: 50%; transform: translateX(-50%);
+  background: rgba(14,22,35,0.97); border: 1px solid; border-radius: 8px;
+  padding: 8px 16px; display: flex; align-items: center; gap: 8px;
+  pointer-events: none; white-space: nowrap;
+  animation: fadeUp 0.2s ease;
+}
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(6px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+.tooltip-icon { font-size: 14px; }
+.tooltip-text { font-size: 12px; color: #7090a8; }
+
+/* =========================================
+   SIDEBAR
+   ========================================= */
+.sidebar { width: 400px; display: flex; flex-direction: column; gap: 10px; padding-left: 32px; }
+.component-grid { display: flex; flex-direction: column; gap: 6px; }
+
+.slot-btn {
+  display: flex; align-items: center; padding: 11px 15px;
+  background: #161f2e; border: 1px solid #1e3048; border-radius: 8px;
+  cursor: pointer; color: #e2e8f0; text-align: left;
+  transition: all 0.18s ease; gap: 12px; width: 100%;
+}
+.slot-btn:hover { background: #1a2840; border-color: #2e4a65; }
+.slot-btn.done { border-color: #1e3a50; background: #0e1e2e; }
+
+.slot-icon { font-size: 17px; width: 22px; text-align: center; flex-shrink: 0; transition: color 0.2s; }
+.slot-info { flex: 1; min-width: 0; }
+.slot-cat  { font-size: 9px;  color: #4a6a85; letter-spacing: 0.15em; margin-bottom: 2px; }
+.slot-name { font-size: 13px; color: #c0d0e0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.slot-price { font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.slot-add   { font-size: 18px; color: #2a3a50; flex-shrink: 0; }
+
+/* Panel */
+.sel-panel { background: #161f2e; border: 1px solid; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.4); margin-top: 4px; }
+.panel-header { display: flex; align-items: center; gap: 10px; padding: 13px 18px; border-bottom: 1px solid; background: #0e1824; }
+.panel-icon  { font-size: 15px; }
+.panel-title { flex: 1; font-size: 13px; font-weight: 700; letter-spacing: 0.08em; color: #f1f5f9; }
+.close-btn   { background: none; border: none; color: #4a6a85; cursor: pointer; font-size: 14px; padding: 4px; transition: color 0.15s; }
+.close-btn:hover { color: #e2e8f0; }
+
+.option-list { padding: 12px; display: flex; flex-direction: column; gap: 8px; max-height: 320px; overflow-y: auto; }
+.option-card { padding: 14px 16px; background: #0e1824; border: 1px solid #1e2d40; border-radius: 8px; cursor: pointer; transition: all 0.15s ease; }
+.option-card:hover { background: #121e30; border-color: #2e4a65; transform: translateX(4px); }
+.option-top  { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.option-name { font-size: 13px; font-weight: 600; color: #d0dcea; line-height: 1.3; }
+.chosen-badge { font-size: 9px; border: 1px solid; border-radius: 4px; padding: 2px 6px; letter-spacing: 0.05em; }
+.option-mid  { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.option-price { font-size: 20px; font-weight: 700; }
+.spec-row    { display: flex; flex-wrap: wrap; gap: 6px; }
+.spec-tag    { font-size: 10px; padding: 2px 8px; background: #0a1420; border: 1px solid #1e2d40; border-radius: 4px; color: #6a8aaa; }
+
+/* =========================================
+   PANEL ESPECIAL — SELECCIÓN DE CAJA
+   ========================================= */
+.case-preview-grid {
+  display: flex; flex-direction: column; gap: 10px;
+  padding: 12px; max-height: 400px; overflow-y: auto;
+}
+.case-card {
+  display: flex; gap: 12px; padding: 12px;
+  background: #0e1824; border: 1px solid; border-radius: 10px;
+  cursor: pointer; transition: all 0.2s ease; position: relative;
+}
+.case-card:hover { background: #121e30; transform: translateX(4px); }
+.case-card.chosen { background: #0a1828; }
+
+/* Preview mini de la caja */
+.case-mini-preview {
+  width: 72px; height: 80px; flex-shrink: 0;
+  border-radius: 4px; border: 1px solid rgba(255,255,255,0.08);
+  position: relative; overflow: hidden;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px;
+}
+.mini-stripe {
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.mini-fans-row { display: flex; gap: 5px; padding-top: 6px; }
+.mini-fan {
+  width: 22px; height: 22px; border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.mini-fan-blade {
+  width: 18px; height: 18px; border-radius: 50%;
+  animation: spin 2s linear infinite;
+}
+
+.case-card-info { flex: 1; min-width: 0; }
+.case-meta { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 5px; }
+
+/* ── Panel slide-in ── */
+.panel-slide { animation: slideIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.1) forwards; }
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: #0e1824; }
+::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
+::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
