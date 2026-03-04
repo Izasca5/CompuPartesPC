@@ -1,6 +1,10 @@
 <?php
 // Simple PHP Index Page
 
+
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
