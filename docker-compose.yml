@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      # host.docker.internal permite al contenedor conectarse a la base de datos local de tu PC (MongoDB Compass)
+      - MONGO_URL=mongodb://host.docker.internal:27017
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  frontend:
+    build:
+      context: ./mi-web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./mi-web:/app
+      - /app/node_modules
+    # Aseguramos que vite exponga la red (--host) para poder verlo en localhost:5173
+    command: npm run dev -- --host

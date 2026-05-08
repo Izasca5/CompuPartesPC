@@ -1,12 +1,12 @@
-﻿const express = require('express');
+const express = require('express');
 const { MongoClient } = require('mongodb');
 const cors = require('cors');
 
 const app = express();
 app.use(cors());
 
-// Esta es la ruta por defecto de tu MongoDB local
-const url = 'mongodb://localhost:27017';
+// Esta es la ruta por defecto de tu MongoDB local o la de Docker si se provee
+const url = process.env.MONGO_URL || 'mongodb://localhost:27017';
 const client = new MongoClient(url);
 
 // OJO: Si en MongoDB Compass llamaste a tu base de datos de otra forma, cámbialo aquí
