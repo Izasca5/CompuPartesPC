@@ -1,0 +1,25 @@
+name: Docker Build Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout del código
+      uses: actions/checkout@v4
+
+    - name: Configurar Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Construir imagen de Docker
+      uses: docker/build-push-action@v5
+      with:
+        context: .
+        push: false # Mantenlo en false solo para probar que construye bien
+        tags: mi-app-test:latest
