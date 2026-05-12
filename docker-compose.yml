@@ -1,24 +1,14 @@
-version: '3.8'
-
 services:
-  # ── OLLAMA — servidor de modelos IA ──────────────────────────────────
+  # ── OLLAMA — servidor de modelos IA (Modo CPU) ──────────
   ollama:
     image: ollama/ollama:latest
     ports:
       - "11434:11434"
     volumes:
       - ollama_models:/root/.ollama
-    # Activar GPU NVIDIA (requiere NVIDIA Container Toolkit instalado)
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: all
-              capabilities: [gpu]
     restart: unless-stopped
 
-  # ── OLLAMA INIT — descarga el modelo qwen2.5:7b al arrancar ─────────
+  # ── OLLAMA INIT — descarga el modelo al arrancar ────────
   ollama-init:
     image: ollama/ollama:latest
     depends_on:
@@ -38,7 +28,7 @@ services:
       - OLLAMA_HOST=http://ollama:11434
     restart: "no"
 
-  # ── BACKEND — API Express ─────────────────────────────────────────────
+  # ── BACKEND — API Express ───────────────────────────────
   backend:
     build:
       context: .
@@ -53,7 +43,7 @@ services:
     depends_on:
       - ollama
 
-  # ── FRONTEND — React + Vite ───────────────────────────────────────────
+  # ── FRONTEND — React + Vite ─────────────────────────────
   frontend:
     build:
       context: ./mi-web

@@ -78,7 +78,7 @@ Responde SOLO con las 5 secciones. Sin introduccion previa. En espanol.`;
 
     try {
         const ollamaPayload = JSON.stringify({
-            model: 'qwen2.5:7b',
+            model: 'qwen2.5:1.5b', // <--- CAMBIA ESTO A 1.5b
             prompt: prompt,
             stream: false,
             options: {
@@ -91,7 +91,7 @@ Responde SOLO con las 5 secciones. Sin introduccion previa. En espanol.`;
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: ollamaPayload,
-            timeoutMs: 120000,
+            timeoutMs: 600000,
         });
 
         const analysis = ollamaRes.response || 'No se pudo obtener respuesta del modelo.';
@@ -100,7 +100,7 @@ Responde SOLO con las 5 secciones. Sin introduccion previa. En espanol.`;
         res.json({
             success: true,
             analysis,
-            model: ollamaRes.model || 'qwen2.5:7b',
+            model: ollamaRes.model || 'qwen2.5:1.5b', // <--- CAMBIA ESTO TAMBIÉN
             duracion_ms: Math.round((ollamaRes.total_duration || 0) / 1e6),
         });
 
@@ -149,7 +149,7 @@ function fetchJSON(url, options = {}) {
 }
 
 // ── Arrancar servidor ────────────────────────────────────────────────────────
-app.listen(3000, () => {
-    console.log('Servidor de CompuPartes funcionando en http://localhost:3000');
+app.listen(3000, '0.0.0.0', () => {
+    console.log('Servidor de CompuPartes funcionando en http://0.0.0.0:3000');
     console.log('Ollama configurado en:', OLLAMA_URL);
 });
