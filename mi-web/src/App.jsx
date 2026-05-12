@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './App.css';
 import { baseDeDatos, CATEGORY_LABELS, CATEGORY_ICONS, SPEC_KEYS } from './datos';
+import AIAnalysis from './AIAnalysis';
 
 function StarRating({ count }) {
   return (
@@ -21,6 +22,7 @@ export default function App() {
   });
   const [activeCategory, setActiveCategory] = useState(null);
   const [hoveredPart, setHoveredPart] = useState(null);
+  const [showAI, setShowAI] = useState(false);
 
   const total = Object.values(selected).reduce((s, c) => s + (c?.precio || 0), 0);
   const completedCount = Object.values(selected).filter(Boolean).length;
@@ -280,6 +282,27 @@ export default function App() {
             ))}
           </div>
 
+          {/* ── BOTÓN ANALIZAR CON IA ── */}
+          {completedCount === 7 && (
+            <button
+              className="ai-analyze-btn"
+              style={{
+                background: `linear-gradient(135deg, ${accent}22, ${accent2}22)`,
+                borderColor: accent,
+                boxShadow: `0 0 24px ${accent}44, inset 0 0 30px ${accent}08`,
+                color: accent,
+              }}
+              onClick={() => setShowAI(true)}
+            >
+              <span className="ai-btn-icon">🤖</span>
+              <span className="ai-btn-text">
+                <span className="ai-btn-main">Analizar Build con IA</span>
+                <span className="ai-btn-sub" style={{ color: accent2 }}>Qwen 2.5 · 7B — Evaluación completa</span>
+              </span>
+              <span className="ai-btn-arrow" style={{ color: accent }}>›</span>
+            </button>
+          )}
+
           {/* ── PANEL DE SELECCIÓN ── */}
           {activeCategory && (
             <div className="sel-panel panel-slide" style={{ borderColor: accent + '44' }}>
@@ -382,6 +405,16 @@ export default function App() {
           )}
         </div>
       </div>
+
+      {/* ── MODAL ANÁLISIS IA ── */}
+      {showAI && (
+        <AIAnalysis
+          selected={selected}
+          accent={accent}
+          accent2={accent2}
+          onClose={() => setShowAI(false)}
+        />
+      )}
     </div>
   );
 }

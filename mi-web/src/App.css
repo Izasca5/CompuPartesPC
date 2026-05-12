@@ -495,3 +495,89 @@
 ::-webkit-scrollbar-track { background: #0e1824; }
 ::-webkit-scrollbar-thumb { background: #1e3a5f; border-radius: 2px; }
 ::-webkit-scrollbar-thumb:hover { background: #38bdf8; }
+
+/* =========================================
+   BOTÓN — ANALIZAR BUILD CON IA
+   ========================================= */
+.ai-analyze-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 18px;
+  border: 1px solid;
+  border-radius: 12px;
+  cursor: pointer;
+  text-align: left;
+  position: relative;
+  overflow: hidden;
+  animation: aiBtnIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 4px;
+}
+
+@keyframes aiBtnIn {
+  from { opacity: 0; transform: translateY(12px) scale(0.96); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Efecto shimmer de fondo */
+.ai-analyze-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: aiShimmer 2.5s linear infinite;
+}
+@keyframes aiShimmer {
+  from { background-position: -200% 0; }
+  to   { background-position:  200% 0; }
+}
+
+.ai-analyze-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.12);
+}
+.ai-analyze-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+.ai-btn-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+  animation: iconBob 2s ease-in-out infinite;
+}
+@keyframes iconBob {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-3px); }
+}
+
+.ai-btn-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-btn-main {
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.ai-btn-sub {
+  font-size: 10px;
+  opacity: 0.8;
+  letter-spacing: 0.08em;
+}
+
+.ai-btn-arrow {
+  font-size: 22px;
+  font-weight: 300;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+.ai-analyze-btn:hover .ai-btn-arrow {
+  transform: translateX(4px);
+}
