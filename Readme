@@ -1,34 +1,41 @@
-Requisitos previos
+# Requisitos previos
 
-Docker Desktop instalado y en funcionamiento.
-Docker Compose (incluido en las versiones modernas de Docker Desktop).
+*   **Docker Desktop** instalado y en funcionamiento.
+*   **Docker Compose** (incluido en las versiones modernas de Docker Desktop).
 
- Instrucciones para el Despliegue
+---
 
-Sigue estos comandos en la terminal:
+# Instrucciones para el Despliegue
 
- 1. Construir las imágenes
-Este comando descarga las dependencias necesarias y prepara las imágenes de Docker según los archivos `Dockerfile`.
+Sigue estos comandos en la terminal desde la carpeta raíz del proyecto:
 
-Bash
-docker-compose build
+### 1. Construir y levantar los servicios
+Este comando descarga las dependencias necesarias, prepara las imágenes según los archivos Dockerfile y levanta todos los contenedores a la vez (Frontend, Backend, el motor de IA Ollama y su inicializador).
 
-2. Levantar los servicios
-Este comando inicia los contenedores del Backend y el Frontend.
+docker-compose up -d --build
 
-Bash
-docker-compose up
+(Nota: El parámetro -d inicia los contenedores en segundo plano para que la terminal quede libre).
 
-3. Actualizar tras realizar cambios (Recomendado)
+### 2. Descargar el modelo de Inteligencia Artificial (Paso Obligatorio)
+Para que el botón de "Análisis IA del Build" funcione correctamente, es necesario descargar el modelo ligero Qwen 2.5 (1.5B) dentro del contenedor de Ollama. Ejecuta este comando en tu terminal:
+
+docker exec -it compupartespc-ollama-1 ollama run qwen2.5:1.5b
+
+1. Verás una barra de progreso indicando la descarga del modelo (pesa aprox. 1 GB).
+2. Cuando finalice, aparecerá un símbolo > indicando que el motor está activo y esperando respuestas.
+3. Escribe /bye y pulsa Enter para salir de la terminal de la IA. El modelo ya quedará instalado de forma permanente.
+
+### 3. Actualizar tras realizar cambios (Recomendado)
 Para apagar el servidor y actualizar, puedes detenerlo desde Docker Desktop y luego utilizar este comando para reconstruir y reiniciar todo en un solo paso:
 
-Bash
 docker-compose up --build
 
-Acceso a la Aplicación
+---
 
-Una vez que los contenedores estén activos, puedes acceder a través de las siguientes direcciones:
+# Acceso a la Aplicación
 
-Frontend (Web): http://localhost:5173
+Una vez que los 4 contenedores (frontend-1, backend-1, ollama-1 y ollama-init-1) estén en verde y activos en Docker Desktop, puedes acceder a través de las siguientes direcciones:
 
-Backend (API): http://localhost:3000/api/componentes
+*   Frontend (Web interactiva 3D): http://localhost:5173
+*   Backend (API de Componentes): http://localhost:3000/api/componentes
+*   Motor IA (Ollama): Operando internamente de fondo en el puerto 11434.
