@@ -1,6 +1,44 @@
 version: '3.8'
 
 services:
+  # ── OLLAMA — servidor de modelos IA ──────────────────────────────────
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_models:/root/.ollama
+    # Activar GPU NVIDIA (requiere NVIDIA Container Toolkit instalado)
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+
+  # ── OLLAMA INIT — descarga el modelo qwen2.5:7b al arrancar ─────────
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    volumes:
+      - ollama_models:/root/.ollama
+    entrypoint: >
+      sh -c "
+        echo '⏳ Esperando a Ollama...' &&
+        until curl -sf http://ollama:11434/ > /dev/null 2>&1; do sleep 2; done &&
+        echo '✅ Ollama listo. Descargando qwen2.5:7b...' &&
+        ollama pull qwen2.5:7b --host http://ollama:11434 ||
+        OLLAMA_HOST=http://ollama:11434 ollama pull qwen2.5:7b &&
+        echo '🚀 Modelo listo!'
+      "
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    restart: "no"
+
+  # ── BACKEND — API Express ─────────────────────────────────────────────
   backend:
     build:
       context: .
@@ -8,11 +46,14 @@ services:
     ports:
       - "3000:3000"
     environment:
-      # host.docker.internal permite al contenedor conectarse a la base de datos local de tu PC (MongoDB Compass)
       - MONGO_URL=mongodb://host.docker.internal:27017
+      - OLLAMA_URL=http://ollama:11434
     extra_hosts:
       - "host.docker.internal:host-gateway"
+    depends_on:
+      - ollama
 
+  # ── FRONTEND — React + Vite ───────────────────────────────────────────
   frontend:
     build:
       context: ./mi-web
@@ -22,5 +63,7 @@ services:
     volumes:
       - ./mi-web:/app
       - /app/node_modules
-    # Aseguramos que vite exponga la red (--host) para poder verlo en localhost:5173
     command: npm run dev -- --host
+
+volumes:
+  ollama_models:
